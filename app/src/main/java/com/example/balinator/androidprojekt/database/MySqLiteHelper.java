@@ -23,7 +23,6 @@ public class MySqLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "widget.db";
     private static final int DATABASE_VERSION = 1;
 
-    // Database creation sql statement
     private static final String DATABASE_CREATE_SERVICES = "create table "
             + TABLE_SERVICES + "( "
             + COLUMN_SERVICES_ID + " integer primary key autoincrement, "

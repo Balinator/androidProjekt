@@ -1,25 +1,21 @@
 package com.example.balinator.androidprojekt.database;
 
-import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.example.balinator.androidprojekt.MyService;
 import com.example.balinator.androidprojekt.ServiceLog;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Balinator on 2016. 12. 08..
  */
 public class Database {
 
-    // Database fields
     private SQLiteDatabase database;
     private MySqLiteHelper dbHelper;
     private String[] allColumnsService = {
@@ -91,8 +87,7 @@ public class Database {
         String[] updateId = {Long.toString(id)};
 
         long backId = database.update(MySqLiteHelper.TABLE_SERVICES,values,MySqLiteHelper.COLUMN_SERVICES_ID + " = ?", updateId);
-        MyService updatedService = getService(backId);
-        return updatedService;
+        return getService(backId);
     }
 
     private MyService getService(long id) {
@@ -131,9 +126,10 @@ public class Database {
 
     public void deleteServiceLog(ServiceLog log) {
         long id = log.getId();
-        System.out.println("Comment deleted with id: " + id);
-        database.delete(MySqLiteHelper.TABLE_SERVICE_LOGS, MySqLiteHelper.COLUMN_SERVICES_ID
-                + " = " + id, null);//TODO: add time to delete
+        long time = log.getTime();
+        System.out.println("Comment deleted with id: " + id + " and time: " + time);
+        database.delete(MySqLiteHelper.TABLE_SERVICE_LOGS, MySqLiteHelper.COLUMN_SERVICE_LOGS_ID
+                + " = " + id + " and " + MySqLiteHelper.COLUMN_SERVICE_LOGS_TIME + " = " + time, null);
     }
 
     public ArrayList<MyService> getAllService() {
@@ -148,7 +144,6 @@ public class Database {
             services.add(service);
             cursor.moveToNext();
         }
-        // make sure to close the cursor
         cursor.close();
         return services;
     }
@@ -157,15 +152,13 @@ public class Database {
         ArrayList<ServiceLog> logs = new ArrayList<>();
 
         Cursor cursor = database.query(MySqLiteHelper.TABLE_SERVICE_LOGS,
-                allColumnsService, null, null, null, null, null);//TODO: where id
-
+                allColumnsServiceLog, MySqLiteHelper.COLUMN_SERVICES_ID + " = " + id, null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             ServiceLog log = cursorToLog(cursor);
             logs.add(log);
             cursor.moveToNext();
         }
-        // make sure to close the cursor
         cursor.close();
         return logs;
     }
