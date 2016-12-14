@@ -1,4 +1,4 @@
-package com.example.balinator.androidprojekt;
+package com.example.balinator.androidprojekt.struct;
 
 /**
  * Created by Balinator on 2016. 12. 08..

@@ -6,8 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.balinator.androidprojekt.MyService;
-import com.example.balinator.androidprojekt.ServiceLog;
+import com.example.balinator.androidprojekt.struct.MyService;
+import com.example.balinator.androidprojekt.struct.ServiceLog;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,8 @@ public class Database {
     private String[] allColumnsService = {
             MySqLiteHelper.COLUMN_SERVICES_ID,
             MySqLiteHelper.COLUMN_SERVICES_NAME,
-            MySqLiteHelper.COLUMN_SERVICES_DESCRIPTION
+            MySqLiteHelper.COLUMN_SERVICES_DESCRIPTION,
+            MySqLiteHelper.COLUMN_SERVICES_FAVORITE
     };
 
     private String[] allColumnsServiceLog = {
@@ -47,7 +48,7 @@ public class Database {
 
         values.put(MySqLiteHelper.COLUMN_SERVICES_NAME, name);
         values.put(MySqLiteHelper.COLUMN_SERVICES_DESCRIPTION, description);
-
+        values.put(MySqLiteHelper.COLUMN_SERVICES_FAVORITE, 0);
 
         long insertId = database.insert(MySqLiteHelper.TABLE_SERVICES, null,
                 values);
@@ -78,11 +79,12 @@ public class Database {
         return newServiceLog;
     }
 
-    public MyService updateService(long id, String name, String desciption) {
+    public MyService updateService(long id, String name, String desciption, int favorite) {
         ContentValues values = new ContentValues();
 
         values.put(MySqLiteHelper.COLUMN_SERVICES_NAME, name);
         values.put(MySqLiteHelper.COLUMN_SERVICES_DESCRIPTION, desciption);
+        values.put(MySqLiteHelper.COLUMN_SERVICES_FAVORITE, favorite);
 
         String[] updateId = {Long.toString(id)};
 
@@ -148,6 +150,22 @@ public class Database {
         return services;
     }
 
+    public ArrayList<MyService> getAllFavoriteService() {
+        ArrayList<MyService> services = new ArrayList<>();
+
+        Cursor cursor = database.query(MySqLiteHelper.TABLE_SERVICES,
+                allColumnsService, MySqLiteHelper.COLUMN_SERVICES_FAVORITE + " = 1", null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            MyService service = cursorToService(cursor);
+            services.add(service);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return services;
+    }
+
     public ArrayList<ServiceLog> getAllServiceLog(long id) {
         ArrayList<ServiceLog> logs = new ArrayList<>();
 
@@ -169,6 +187,7 @@ public class Database {
         service.setId(cursor.getLong(0));
         service.setName(cursor.getString(1));
         service.setDescription(cursor.getString(2));
+        service.setFavorite(cursor.getInt(3)==1);
 
         return service;
     }

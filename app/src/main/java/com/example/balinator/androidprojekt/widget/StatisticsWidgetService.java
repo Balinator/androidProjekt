@@ -1,4 +1,4 @@
-package com.example.balinator.androidprojekt;
+package com.example.balinator.androidprojekt.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;

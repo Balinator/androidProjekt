@@ -1,4 +1,4 @@
-package com.example.balinator.androidprojekt;
+package com.example.balinator.androidprojekt.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -9,8 +9,12 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.example.balinator.androidprojekt.MainActivity;
+import com.example.balinator.androidprojekt.R;
+
 public class StatisticsWidgetProvider extends AppWidgetProvider {
 
+    public static final String WIDGET_IDS_KEY = "WIDGET_IDS_KEY";
     private final String tag = "WidgetProvider";
     private Context context;
 
@@ -33,8 +37,8 @@ public class StatisticsWidgetProvider extends AppWidgetProvider {
             intentClick.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             /** retrieve a PendingIntent that will get the new row's name? */
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intentClick, PendingIntent.FLAG_UPDATE_CURRENT);
-            //views.setPendingIntentTemplate(R.id.widgetListView, pendingIntent);
-            remoteView.setOnClickPendingIntent(R.id.btnAddRow, pendingIntent);
+
+            //remoteView.setOnClickPendingIntent(R.id.btnAddRow, pendingIntent);
 
             /** perform an update on the current widget */
             appWidgetManager.updateAppWidget(currentWidgetId, remoteView);
@@ -46,7 +50,15 @@ public class StatisticsWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        super.onReceive(context, intent);
+        if (intent.hasExtra(WIDGET_IDS_KEY)) {
+            Log.d(tag,"update");
+            int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
+            for(int id: ids) {
+                AppWidgetManager.getInstance(context).notifyAppWidgetViewDataChanged(id, R.id.widgetListView);
+            }
+            //this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
+        } else {
+            super.onReceive(context, intent);
+        }
     }
 }

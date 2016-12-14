@@ -1,4 +1,4 @@
-package com.example.balinator.androidprojekt;
+package com.example.balinator.androidprojekt.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -6,6 +6,10 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+
+import com.example.balinator.androidprojekt.R;
+import com.example.balinator.androidprojekt.database.Database;
+import com.example.balinator.androidprojekt.struct.MyService;
 
 import java.util.ArrayList;
 
@@ -17,20 +21,22 @@ import java.util.ArrayList;
 public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private final String tag = "ViewFactory";
-   // private static final String[] data = {"stuff", "stuff2", "stuff3"};
-    private ArrayList<String> data;
+    private ArrayList<MyService> data;
     private Context context;
     private int widgetID;
+
+    private Database db;
+
 
     public StatisticsWidgetViewFactory(Context context, Intent intent) {
         Log.v(tag, "constructor");
         this.context = context;
         this.widgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        db = new Database(context);
         if (data == null) {
-            data = new ArrayList<String>();
-            data.add("sttuff");
-            data.add(" izee");
-            data.add("sumthing");
+            db.open();
+            data = db.getAllFavoriteService();
+            db.close();
         }
     }
 
@@ -41,7 +47,9 @@ public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteVie
 
     @Override
     public void onDataSetChanged() {
-
+        db.open();
+        data = db.getAllFavoriteService();
+        db.close();
     }
 
     @Override
@@ -57,7 +65,8 @@ public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteVie
     @Override
     public RemoteViews getViewAt(int i) {
         RemoteViews row = new RemoteViews(context.getPackageName(), R.layout.statistics_row);
-        row.setTextViewText(R.id.textView, data.get(i));
+        row.setTextViewText(R.id.widget_statistics_row_title, data.get(i).getName());
+        row.setTextViewText(R.id.widget_statistics_row_description, data.get(i).getDescription());
         return row;
     }
 
@@ -73,7 +82,7 @@ public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteVie
 
     @Override
     public long getItemId(int i) {
-        return i;
+        return data.get(i).getId();
     }
 
     @Override

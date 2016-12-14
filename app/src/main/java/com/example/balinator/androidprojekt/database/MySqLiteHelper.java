@@ -14,6 +14,7 @@ public class MySqLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_SERVICES_ID = "id";
     public static final String COLUMN_SERVICES_NAME = "name";
     public static final String COLUMN_SERVICES_DESCRIPTION = "description";
+    public static final String COLUMN_SERVICES_FAVORITE = "favorite";
 
     public static final String TABLE_SERVICE_LOGS = "service_logs";
     public static final String COLUMN_SERVICE_LOGS_ID = "id";
@@ -21,13 +22,14 @@ public class MySqLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_SERVICE_LOGS_DATA = "data";
 
     private static final String DATABASE_NAME = "widget.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static final String DATABASE_CREATE_SERVICES = "create table "
             + TABLE_SERVICES + "( "
             + COLUMN_SERVICES_ID + " integer primary key autoincrement, "
             + COLUMN_SERVICES_NAME + " text not null,"
-            + COLUMN_SERVICES_DESCRIPTION + " text not null"
+            + COLUMN_SERVICES_DESCRIPTION + " text not null,"
+            + COLUMN_SERVICES_FAVORITE + " integer not null"
             + " )";
 
     private static final String DATABASE_CREATE_SERVICE_LOGS = "create table "

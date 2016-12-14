@@ -1,4 +1,4 @@
-package com.example.balinator.androidprojekt;
+package com.example.balinator.androidprojekt.struct;
 
 /**
  * Created by Balinator on 2016. 12. 08..
@@ -7,6 +7,7 @@ public class MyService {
     private long mId;
     private String mName;
     private String mDescription;
+    private boolean mFavorite;
 
     public MyService() {
     }
@@ -39,5 +40,13 @@ public class MyService {
 
     public void setDescription(String description) {
         this.mDescription = description;
+    }
+
+    public boolean isFavorite() {
+        return mFavorite;
+    }
+
+    public void setFavorite(boolean mFavorite) {
+        this.mFavorite = mFavorite;
     }
 }
