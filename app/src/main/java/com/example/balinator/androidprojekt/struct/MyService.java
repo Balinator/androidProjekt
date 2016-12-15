@@ -4,10 +4,12 @@ package com.example.balinator.androidprojekt.struct;
  * Created by Balinator on 2016. 12. 08..
  */
 public class MyService {
-    private long mId;
-    private String mName;
-    private String mDescription;
-    private boolean mFavorite;
+    protected long mId;
+    protected String mName;
+    protected String mDescription;
+    protected boolean mFavorite;
+
+    protected String mStatistic;
 
     public MyService() {
     }
@@ -48,5 +50,13 @@ public class MyService {
 
     public void setFavorite(boolean mFavorite) {
         this.mFavorite = mFavorite;
+    }
+
+    public String getStatistic() {
+        throw new UnsupportedOperationException("Not implemented yet!");
+    }
+
+    public void setStatistic() {
+        throw new UnsupportedOperationException("Not implemented yet!");
     }
 }
