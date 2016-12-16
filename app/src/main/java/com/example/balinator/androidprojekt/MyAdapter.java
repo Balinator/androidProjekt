@@ -1,6 +1,7 @@
 package com.example.balinator.androidprojekt;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +29,10 @@ public class MyAdapter extends BaseAdapter {
         this.context = context;
         mInflater = LayoutInflater.from(context);
         db = new Database(context);
-        refresshItems();
+        refreshItems();
     }
 
-    public void refresshItems() {
+    public void refreshItems() {
         mData = new ArrayList<>();
         db.open();
         for(MyService s: db.getAllService()){
@@ -95,19 +96,26 @@ public class MyAdapter extends BaseAdapter {
             }
 
             private int toInt(boolean isChecked) {
-                if(!isChecked){
+                if (!isChecked) {
                     return 0;
                 }
-                MainActivity.updateMyWidgets(context);
+                //MainActivity.updateMyWidgets(context);
+                notifyDataset();
                 return 1;
             }
         });
         return convertView;
     }
 
-    public static class ViewHolder {
-        public TextView title;
-        public TextView description;
-        public Switch aSwitch;
+    private void notifyDataset() {
+        Intent intent = new Intent("UPDATE_DATASET");
+
+        context.sendBroadcast(intent);
+    }
+
+    private static class ViewHolder {
+        private TextView title;
+        private TextView description;
+        private Switch aSwitch;
     }
 }

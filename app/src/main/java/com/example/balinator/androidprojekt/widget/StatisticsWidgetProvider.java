@@ -50,6 +50,7 @@ public class StatisticsWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
         if (intent.hasExtra(WIDGET_IDS_KEY)) {
             Log.d(tag,"update");
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
@@ -57,6 +58,7 @@ public class StatisticsWidgetProvider extends AppWidgetProvider {
                 AppWidgetManager.getInstance(context).notifyAppWidgetViewDataChanged(id, R.id.widgetListView);
             }
             //this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
+            //super.onReceive(context, intent);
         } else {
             super.onReceive(context, intent);
         }
