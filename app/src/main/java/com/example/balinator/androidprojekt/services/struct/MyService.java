@@ -64,10 +64,12 @@ public class MyService {
     }
 
     public String getStatistic() {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        return "no data found";
+        //throw new UnsupportedOperationException("Not implemented yet!");
     }
 
     public void setStatistic() {
-        throw new UnsupportedOperationException("Not implemented yet!");
+
+        //throw new UnsupportedOperationException("Not implemented yet!");
     }
 }

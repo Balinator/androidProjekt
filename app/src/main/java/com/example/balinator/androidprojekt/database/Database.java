@@ -100,7 +100,7 @@ public class Database {
         return getService(backId);
     }
 
-    private MyService getService(long id) {
+    public MyService getService(long id) {
 
         String[] getId = {Long.toString(id)};
 
@@ -227,7 +227,7 @@ public class Database {
         return new ServiceLog(cursor.getLong(0),cursor.getLong(1),cursor.getString(2));
     }
 
-    public void chackServices(){
+    public void checkServices(){
         this.open();
         ArrayList<MyService> services = getAllService();
 

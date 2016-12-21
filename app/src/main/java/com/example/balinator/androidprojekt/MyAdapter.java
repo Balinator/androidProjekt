@@ -22,6 +22,7 @@ import java.util.ArrayList;
  * Created by Balinator on 2016. 12. 12..
  */
 public class MyAdapter extends BaseAdapter {
+    private static final String tag = "BaseAdapter";
 
     private ArrayList<MyService> mData = new ArrayList<>();
     private LayoutInflater mInflater;
@@ -95,15 +96,29 @@ public class MyAdapter extends BaseAdapter {
                 db.open();
                 db.updateService(service.getId(),service.getName(),service.getDescription(),toInt(isChecked));
                 db.close();
+                notifyDataset();
+                MainActivity.updateMyWidgets(context);
             }
 
             private int toInt(boolean isChecked) {
                 if (!isChecked) {
                     return 0;
                 }
-                //MainActivity.updateMyWidgets(context);
-                notifyDataset();
                 return 1;
+            }
+        });
+
+        holder.title.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Intent removeServiceIntent = new Intent("REMOVE_SERVICE");
+                removeServiceIntent.putExtra("viewID", view.getId());
+                removeServiceIntent.putExtra("serviceID", service.getId());
+                /*db.open();
+                db.deleteService(service);
+                db.close();*/
+                context.sendBroadcast(removeServiceIntent);
+                return true;
             }
         });
         return convertView;
