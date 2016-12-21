@@ -65,7 +65,7 @@ public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteVie
     @Override
     public RemoteViews getViewAt(int i) {
         RemoteViews row = new RemoteViews(context.getPackageName(), R.layout.statistics_row);
-        MyService d = data.get(i);
+        MyService d = mData.get(i);
         row.setTextViewText(R.id.widget_statistics_row_title, d.getName());
 
         d.setStatistic();
