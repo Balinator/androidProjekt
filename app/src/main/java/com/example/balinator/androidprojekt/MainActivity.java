@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.example.balinator.androidprojekt.database.Database;
 import com.example.balinator.androidprojekt.widget.StatisticsWidgetProvider;
@@ -28,8 +29,7 @@ import com.example.balinator.androidprojekt.widget.StatisticsWidgetService;
 public class MainActivity extends AppCompatActivity {
     private static final String tag = "MainActivity";
 
-    private String inputText = "";
-
+    private Context context;
     private ListView mListView;
     private MyAdapter mAdapter;
 
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        context = this;
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -52,6 +53,19 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MyAdapter(getApplicationContext());
 
         mListView.setAdapter(mAdapter);
+
+        /** receive a simple text data from another application */
+        Intent intent = this.getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if (type.equals("text/plain")) {
+                String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+                Toast.makeText(context, ("received message: " + sharedText), Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     @Override
@@ -114,35 +128,9 @@ public class MainActivity extends AppCompatActivity {
                 db.createService(input1.getText().toString(),input2.getText().toString());
                 db.close();
 
-                mAdapter.refresshItems();
+                mAdapter.refreshItems();
 
-                updateMyWidgets(getApplicationContext());
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-    public void showInputDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Name the new entry");
-
-        /** the dialog's view is going to be an EditText */
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                inputText = input.getText().toString();
+                //updateMyWidgets(getApplicationContext());
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

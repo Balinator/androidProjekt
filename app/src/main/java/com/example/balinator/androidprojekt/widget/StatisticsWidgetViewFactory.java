@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private final String tag = "ViewFactory";
-    private ArrayList<MyService> data;
+    private ArrayList<MyService> mData;
     private Context context;
     private int widgetID;
 
@@ -33,9 +33,9 @@ public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteVie
         this.context = context;
         this.widgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         db = new Database(context);
-        if (data == null) {
+        if (mData == null) {
             db.open();
-            data = db.getAllFavoriteService();
+            mData = db.getAllFavoriteService();
             db.close();
         }
     }
@@ -48,7 +48,7 @@ public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteVie
     @Override
     public void onDataSetChanged() {
         db.open();
-        data = db.getAllFavoriteService();
+        mData = db.getAllFavoriteService();
         db.close();
     }
 
@@ -59,7 +59,7 @@ public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteVie
 
     @Override
     public int getCount() {
-        return data.size();
+        return mData.size();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteVie
 
     @Override
     public long getItemId(int i) {
-        return data.get(i).getId();
+        return mData.get(i).getId();
     }
 
     @Override
