@@ -1,9 +1,17 @@
-package com.example.balinator.androidprojekt.struct;
+package com.example.balinator.androidprojekt.services.struct;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.util.Log;
 
 /**
  * Created by Balinator on 2016. 12. 08..
  */
 public class MyService {
+    private static final String tag = "MyService";
+    protected Context context;
+
     protected long mId;
     protected String mName;
     protected String mDescription;
@@ -11,13 +19,15 @@ public class MyService {
 
     protected String mStatistic;
 
-    public MyService() {
+    public MyService(Context context) {
+        this.context = context;
     }
 
-    public MyService(long mId, String mName, String mDescription) {
+    public MyService(long mId, String mName, String mDescription, Context context) {
         this.mId = mId;
         this.mName = mName;
         this.mDescription = mDescription;
+        this.context = context;
     }
 
     public long getId() {
@@ -50,6 +60,7 @@ public class MyService {
 
     public void setFavorite(boolean mFavorite) {
         this.mFavorite = mFavorite;
+        Log.d(tag,"setfavorite to: " + mFavorite);
     }
 
     public String getStatistic() {

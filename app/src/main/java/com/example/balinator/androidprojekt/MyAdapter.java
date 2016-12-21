@@ -10,7 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.balinator.androidprojekt.database.Database;
-import com.example.balinator.androidprojekt.struct.MyService;
+import com.example.balinator.androidprojekt.services.struct.MyService;
 
 import java.util.ArrayList;
 

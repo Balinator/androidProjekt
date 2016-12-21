@@ -9,7 +9,7 @@ import android.widget.RemoteViewsService;
 
 import com.example.balinator.androidprojekt.R;
 import com.example.balinator.androidprojekt.database.Database;
-import com.example.balinator.androidprojekt.struct.MyService;
+import com.example.balinator.androidprojekt.services.struct.MyService;
 
 import java.util.ArrayList;
 
@@ -65,8 +65,12 @@ public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteVie
     @Override
     public RemoteViews getViewAt(int i) {
         RemoteViews row = new RemoteViews(context.getPackageName(), R.layout.statistics_row);
-        row.setTextViewText(R.id.widget_statistics_row_title, data.get(i).getName());
-        row.setTextViewText(R.id.widget_statistics_row_text_view, data.get(i).getStatistic());
+        MyService d = data.get(i);
+        row.setTextViewText(R.id.widget_statistics_row_title, d.getName());
+
+        d.setStatistic();
+
+        row.setTextViewText(R.id.widget_statistics_row_text_view, d.getStatistic());
         return row;
     }
 

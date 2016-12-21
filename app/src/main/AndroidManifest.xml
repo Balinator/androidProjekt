@@ -34,6 +34,15 @@
             android:name=".widget.StatisticsWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
+        <receiver android:name=".services.screenonservice.MyScreenOnOffReciver" >
+            <intent-filter>
+                <action android:name="android.intent.action.SCREEN_ON" >
+                </action>
+                <action android:name="android.intent.action.SCREEN_OFF" >
+                </action>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

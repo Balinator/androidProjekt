@@ -12,5 +12,10 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_chack_services"
+        android:orderInCategory="100"
+        android:title="@string/action_chack_services"
+        app:showAsAction="never" />
 
 </menu>

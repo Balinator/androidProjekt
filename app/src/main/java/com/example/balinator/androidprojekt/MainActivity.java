@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -73,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_add_new_service:
                 showAddServiceDialog();
+                return true;
+            case R.id.action_chack_services:
+                Database db = new Database(getApplicationContext());
+                db.open();
+                db.chackServices();
+                db.close();
+                mAdapter.notifyDataSetChanged();
                 return true;
         }
         return super.onOptionsItemSelected(item);

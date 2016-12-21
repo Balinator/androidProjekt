@@ -39,8 +39,11 @@ public class MySqLiteHelper extends SQLiteOpenHelper {
             + COLUMN_SERVICE_LOGS_DATA + " text not null"
             + " )";
 
+    public final Context context;
+
     public MySqLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override

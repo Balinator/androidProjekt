@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
-import com.example.balinator.androidprojekt.struct.MyService;
-import com.example.balinator.androidprojekt.struct.ServiceLog;
+import com.example.balinator.androidprojekt.services.screenonservice.MyScreenOnService;
+import com.example.balinator.androidprojekt.services.struct.MyService;
+import com.example.balinator.androidprojekt.services.struct.ServiceLog;
 
 import java.util.ArrayList;
 
@@ -61,17 +63,23 @@ public class Database {
         return newService;
     }
 
-    public ServiceLog createServiceLog(int id, String data) {
+    public ServiceLog createServiceLog(long id, String data) {
         ContentValues values = new ContentValues();
 
+        long time = System.currentTimeMillis();
+
         values.put(MySqLiteHelper.COLUMN_SERVICE_LOGS_ID, id);
-        values.put(MySqLiteHelper.COLUMN_SERVICE_LOGS_TIME, System.currentTimeMillis());
+        values.put(MySqLiteHelper.COLUMN_SERVICE_LOGS_TIME, time);
         values.put(MySqLiteHelper.COLUMN_SERVICE_LOGS_DATA, data);
 
-        long insertId = database.insert(MySqLiteHelper.TABLE_SERVICE_LOGS, null,
-                values);
+        Log.d("db",id + " " + time + " " + data);
+
+        long i = database.insert(MySqLiteHelper.TABLE_SERVICE_LOGS, null, values);
+
+        Log.d("db",""+i);
+
         Cursor cursor = database.query(MySqLiteHelper.TABLE_SERVICE_LOGS,
-                allColumnsServiceLog, MySqLiteHelper.COLUMN_SERVICE_LOGS_ID + " = " + insertId, null,
+                allColumnsServiceLog, MySqLiteHelper.COLUMN_SERVICE_LOGS_ID + " = " + id + " AND " + MySqLiteHelper.COLUMN_SERVICE_LOGS_TIME + " = " + time, null,
                 null, null, null);
         cursor.moveToFirst();
         ServiceLog newServiceLog = cursorToLog(cursor);
@@ -150,6 +158,22 @@ public class Database {
         return services;
     }
 
+    public MyService getService(String name) {
+        ArrayList<MyService> services = new ArrayList<>();
+
+        Cursor cursor = database.query(MySqLiteHelper.TABLE_SERVICES,
+                allColumnsService, MySqLiteHelper.COLUMN_SERVICES_NAME + " = '" + name + "'", null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            MyService service = cursorToService(cursor);
+            services.add(service);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return services.get(0);
+    }
+
     public ArrayList<MyService> getAllFavoriteService() {
         ArrayList<MyService> services = new ArrayList<>();
 
@@ -182,7 +206,15 @@ public class Database {
     }
 
     private MyService cursorToService(Cursor cursor) {
-        MyService service = new MyService();
+        MyService service;
+        Log.d("db","name: " + cursor.getString(1));
+        if(cursor.getString(1).equals(MyScreenOnService.sName)){
+            Log.d("db",MyScreenOnService.sName);
+            service = new MyScreenOnService(dbHelper.context);
+        }else{
+            Log.d("db","normal");
+            service = new MyService(dbHelper.context);
+        }
 
         service.setId(cursor.getLong(0));
         service.setName(cursor.getString(1));
@@ -193,5 +225,25 @@ public class Database {
     }
     private ServiceLog cursorToLog(Cursor cursor) {
         return new ServiceLog(cursor.getLong(0),cursor.getLong(1),cursor.getString(2));
+    }
+
+    public void chackServices(){
+        this.open();
+        ArrayList<MyService> services = getAllService();
+
+        if(!isService(services,MyScreenOnService.sName)){
+            this.createService(MyScreenOnService.sName,"Makes a statistic about the how many time was the screen on!");
+        }
+
+        this.close();
+    }
+
+    private boolean isService(ArrayList<MyService> services, String name){
+        for (MyService s: services){
+            if(s.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
     }
 }
