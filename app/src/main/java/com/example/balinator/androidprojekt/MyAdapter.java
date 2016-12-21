@@ -2,6 +2,7 @@ package com.example.balinator.androidprojekt;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.balinator.androidprojekt.database.Database;
+import com.example.balinator.androidprojekt.services.screenonservice.MyScreenOnOffReciver;
+import com.example.balinator.androidprojekt.services.screenonservice.MyScreenOnService;
 import com.example.balinator.androidprojekt.services.struct.MyService;
 
 import java.util.ArrayList;
@@ -69,8 +72,7 @@ public class MyAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
-        int type = getItemViewType(position);
+        ViewHolder holder;
         final MyService service = mData.get(position);
         if (convertView == null) {
             holder = new ViewHolder();

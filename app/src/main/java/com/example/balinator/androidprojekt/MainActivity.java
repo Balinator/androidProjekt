@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView mListView;
     private MyAdapter mAdapter;
 
+    private Database db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         context = this;
+
+        if(db == null){
+            db = new Database(getApplicationContext());
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        db.open();
+        db.chackServices();
+        db.close();
     }
 
     @Override
@@ -87,14 +96,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 return true;
             case R.id.action_add_new_service:
-                showAddServiceDialog();
+                //showAddServiceDialog();
                 return true;
             case R.id.action_chack_services:
-                Database db = new Database(getApplicationContext());
                 db.open();
                 db.chackServices();
                 db.close();
-                mAdapter.notifyDataSetChanged();
+                mAdapter.refreshItems();
                 return true;
         }
         return super.onOptionsItemSelected(item);

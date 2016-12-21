@@ -33,10 +33,6 @@
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
-            <intent-filter>
-
-            </intent-filter>
-
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget" />
@@ -47,12 +43,6 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver android:name=".services.screenonservice.MyScreenOnOffReciver" >
-            <intent-filter>
-                <action android:name="android.intent.action.SCREEN_ON" >
-                </action>
-                <action android:name="android.intent.action.SCREEN_OFF" >
-                </action>
-            </intent-filter>
         </receiver>
 
     </application>

@@ -21,6 +21,14 @@
         private static final String tag = "MyScreenOnOffReciver";
 
         private Database db;
+        private boolean mIsOn = false;
+
+        public boolean isOn(){
+            return mIsOn;
+        }
+        public void switchState(){
+            mIsOn = !mIsOn;
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -32,7 +40,7 @@
                 }
                 db.open();
                 long id = db.getService(MyScreenOnService.sName).getId();
-                db.createServiceLog(id,System.currentTimeMillis() + ":on");
+                db.createServiceLog(id,"on");
                 db.close();
                 Log.d(tag,"screen on log");
             }else if(state.equals(Intent.ACTION_SCREEN_OFF)) {
@@ -41,7 +49,7 @@
                 }
                 db.open();
                 long id = db.getService(MyScreenOnService.sName).getId();
-                db.createServiceLog(id, System.currentTimeMillis() + ":off");
+                db.createServiceLog(id,"off");
                 db.close();
                 Log.d(tag, "screen off log");
             }

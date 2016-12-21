@@ -232,6 +232,7 @@ public class Database {
         ArrayList<MyService> services = getAllService();
 
         if(!isService(services,MyScreenOnService.sName)){
+
             this.createService(MyScreenOnService.sName,"Makes a statistic about the how many time was the screen on!");
         }
 
