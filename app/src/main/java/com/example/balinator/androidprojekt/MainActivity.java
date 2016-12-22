@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         db.open();
         db.chackServices();
+        mAdapter.refreshItems();
         db.close();
     }
 
