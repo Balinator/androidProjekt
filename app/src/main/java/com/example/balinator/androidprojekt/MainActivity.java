@@ -25,6 +25,7 @@ import com.example.balinator.androidprojekt.database.Database;
 import com.example.balinator.androidprojekt.services.struct.MyService;
 import com.example.balinator.androidprojekt.widget.WidgetProvider;
 import com.example.balinator.androidprojekt.widget.WidgetRefresher;
+import com.example.balinator.androidprojekt.widget.WidgetService;
 
 public class MainActivity extends AppCompatActivity {
     private static final String tag = "MainActivity";
@@ -96,7 +97,11 @@ public class MainActivity extends AppCompatActivity {
             IntentFilter filter = new IntentFilter();
             filter.addAction(startState);
             filter.addAction(endState);
-            context.registerReceiver(widgetRefresher, filter);
+            if(context == null) {
+                WidgetService.context.registerReceiver(widgetRefresher, filter);
+            }else{
+                context.registerReceiver(widgetRefresher,filter);
+            }
             Log.d(tag, "WidgetRefrssher registred");
             widgetRefresher.start();
         }else if(isWidgetRefressher && length == 0){

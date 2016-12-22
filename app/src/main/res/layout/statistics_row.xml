@@ -10,11 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:textColor="@android:color/black"
         xmlns:android="http://schemas.android.com/apk/res/android" />
     <TextView
         android:id="@+id/widget_statistics_row_text_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black">
     </TextView>
 </LinearLayout>
 

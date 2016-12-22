@@ -3,6 +3,7 @@ package com.example.balinator.androidprojekt.widget;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -67,10 +68,12 @@ public class WidgetViewFactory implements RemoteViewsService.RemoteViewsFactory 
         RemoteViews row = new RemoteViews(context.getPackageName(), R.layout.statistics_row);
         MyService d = mData.get(i);
         row.setTextViewText(R.id.widget_statistics_row_title, d.getName());
+        row.setTextColor(R.id.widget_statistics_row_title, Color.BLACK);
 
         d.setStatistic();
 
         row.setTextViewText(R.id.widget_statistics_row_text_view, d.getStatistic());
+        row.setTextColor(R.id.widget_statistics_row_text_view, Color.BLACK);
         return row;
     }
 
