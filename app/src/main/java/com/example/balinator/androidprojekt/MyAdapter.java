@@ -2,6 +2,7 @@ package com.example.balinator.androidprojekt;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,19 +109,8 @@ public class MyAdapter extends BaseAdapter {
             }
         });
 
-        holder.title.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                Intent removeServiceIntent = new Intent("REMOVE_SERVICE");
-                removeServiceIntent.putExtra("viewID", view.getId());
-                removeServiceIntent.putExtra("serviceID", service.getId());
-                /*db.open();
-                db.deleteService(service);
-                db.close();*/
-                context.sendBroadcast(removeServiceIntent);
-                return true;
-            }
-        });
+        holder.description.setTextColor(Color.BLACK);
+        holder.title.setTextColor(Color.BLACK);
         return convertView;
     }
 

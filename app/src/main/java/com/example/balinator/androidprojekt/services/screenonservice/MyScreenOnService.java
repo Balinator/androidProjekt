@@ -18,7 +18,7 @@ import java.util.Comparator;
  */
 public class MyScreenOnService extends MyService {
     public static final String sName = "MyScreenOnService";
-    public static final long SECS_IN_MILLS = 10000;
+    public static final long SECS_IN_MILLS = 1000;
     public static final long MINS_IN_MILLS = 60 * SECS_IN_MILLS;
     public static final long HOUR_IN_MILLS = 60 * MINS_IN_MILLS;
     public static final long DAY_IN_MILLS = 24 * HOUR_IN_MILLS;
