@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static boolean isWidgetRefressher = false;
     private static WidgetRefresher widgetRefresher;
-    private static int updateRate = 1000;
+    private static int updateRate = 30 * 1000;
     private static String startState = Intent.ACTION_SCREEN_ON;
     private static String endState = Intent.ACTION_SCREEN_OFF;
 
