@@ -19,13 +19,11 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
-import android.util.Log;
 
 import com.example.balinator.androidprojekt.database.Database;
 import com.example.balinator.androidprojekt.services.struct.MyService;
-import com.example.balinator.androidprojekt.widget.StatisticsWidgetProvider;
-import com.example.balinator.androidprojekt.widget.StatisticsWidgetService;
+import com.example.balinator.androidprojekt.widget.WidgetProvider;
+import com.example.balinator.androidprojekt.widget.WidgetRefresher;
 
 public class MainActivity extends AppCompatActivity {
     private static final String tag = "MainActivity";
@@ -36,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver mReceiver_deleteService;
 
     private Database db;
+    private WidgetRefresher widgetRefresher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 int viewID = intent.getIntExtra("viewID", 0);
                 long serviceID = intent.getLongExtra("serviceID", 0);
-                Log.v(tag, "" + viewID);
                 db.open();
                 MyService serviceToDelete = db.getService(serviceID);
                 db.close();
@@ -80,15 +78,26 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         registerReceiver(mReceiver_deleteService, new IntentFilter("REMOVE_SERVICE"));
+
+        int updateRate = 60;
+        String startState = Intent.ACTION_SCREEN_ON;
+        String endState = Intent.ACTION_SCREEN_OFF;
+        widgetRefresher = new WidgetRefresher(context, updateRate, startState, endState);
+        registerReceiver(widgetRefresher, new IntentFilter(Intent.ACTION_SCREEN_ON));
+        //registerReceiver(widgetRefresher, new IntentFilter(Intent.ACTION_SCREEN_OFF));
     }
 
     @Override
     public void onPause() {
+        super.onPause();
         if (mReceiver_deleteService != null) {
             unregisterReceiver(mReceiver_deleteService);
             mReceiver_deleteService = null;
         }
-        super.onPause();
+        if (widgetRefresher != null) {
+            unregisterReceiver(widgetRefresher);
+            widgetRefresher = null;
+        }
     }
 
     @Override
@@ -168,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void updateMyWidgets(Context context) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, StatisticsWidgetProvider.class));
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, WidgetProvider.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widgetListView);
     }
 

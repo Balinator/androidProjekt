@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.example.balinator.androidprojekt.MainActivity;
 import com.example.balinator.androidprojekt.R;
 
-public class StatisticsWidgetProvider extends AppWidgetProvider {
+public class WidgetProvider extends AppWidgetProvider {
 
     public static final String WIDGET_IDS_KEY = "WIDGET_IDS_KEY";
     private final String tag = "WidgetProvider";
@@ -23,7 +23,7 @@ public class StatisticsWidgetProvider extends AppWidgetProvider {
         for (int i = 0; i< appWidgetIds.length; ++i){
             int currentWidgetId = appWidgetIds[i];
             /** creating an Intent to the WidgetService to add another row to the widget's ListView */
-            Intent intentService = new Intent(context, StatisticsWidgetService.class);
+            Intent intentService = new Intent(context, WidgetService.class);
             /** pass the widget's ID through the Intent */
             intentService.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, currentWidgetId);
 
@@ -51,16 +51,15 @@ public class StatisticsWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
+        Log.v(tag, intent.getAction());
         if (intent.hasExtra(WIDGET_IDS_KEY)) {
-            Log.d(tag,"update");
+            Log.d(tag, "update");
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
-            for(int id: ids) {
+            for (int id : ids) {
                 AppWidgetManager.getInstance(context).notifyAppWidgetViewDataChanged(id, R.id.widgetListView);
             }
             //this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
             //super.onReceive(context, intent);
-        } else {
-            super.onReceive(context, intent);
         }
     }
 }

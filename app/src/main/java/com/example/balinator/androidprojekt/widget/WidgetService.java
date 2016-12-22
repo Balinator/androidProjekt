@@ -9,11 +9,11 @@ import android.widget.RemoteViewsService;
  * Created by czimbortibor on 08/12/16.
  */
 
-public class StatisticsWidgetService extends RemoteViewsService {
+public class WidgetService extends RemoteViewsService {
 
     private final String tag = "WidgetService";
 
-    public StatisticsWidgetService() {
+    public WidgetService() {
         Log.v(tag, "service start");
     }
 
@@ -21,6 +21,6 @@ public class StatisticsWidgetService extends RemoteViewsService {
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
         Log.v(tag, "get factory");
         int widgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        return (new StatisticsWidgetViewFactory(this.getApplicationContext(), intent));
+        return (new WidgetViewFactory(this.getApplicationContext(), intent));
     }
 }
