@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -20,6 +21,9 @@ public class WidgetProvider extends AppWidgetProvider {
 
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         this.context = context;
+
+        MainActivity.chackWidgetRefressher(appWidgetIds.length);
+
         for (int i = 0; i< appWidgetIds.length; ++i){
             int currentWidgetId = appWidgetIds[i];
             /** creating an Intent to the WidgetService to add another row to the widget's ListView */
@@ -32,7 +36,6 @@ public class WidgetProvider extends AppWidgetProvider {
             /** attach the adapter to the ListView */
             remoteView.setRemoteAdapter(R.id.widgetListView, intentService);
 
-            // TODO: update the widget with a new row
             Intent intentClick = new Intent(context, MainActivity.class);
             intentClick.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             /** retrieve a PendingIntent that will get the new row's name? */
@@ -51,7 +54,11 @@ public class WidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        Log.v(tag, intent.getAction());
+
+        String action = intent.getAction();
+
+        Log.v(tag, action);
+
         if (intent.hasExtra(WIDGET_IDS_KEY)) {
             Log.d(tag, "update");
             int[] ids = intent.getExtras().getIntArray(WIDGET_IDS_KEY);
@@ -61,5 +68,9 @@ public class WidgetProvider extends AppWidgetProvider {
             //this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
             //super.onReceive(context, intent);
         }
+        if (action.equals("REFRESH_WIDGET")) {
+           MainActivity.updateMyWidgets(context);
+        }
+
     }
 }

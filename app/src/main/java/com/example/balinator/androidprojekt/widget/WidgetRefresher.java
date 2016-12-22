@@ -21,7 +21,7 @@ public class WidgetRefresher extends BroadcastReceiver {
     private String startAction;
     private String endAction;
 
-    public WidgetRefresher(final Context context, int updateRate, String startAction, String endAction) {
+    public WidgetRefresher(final Context context, final int updateRate, String startAction, String endAction) {
         this.updateRate = updateRate;
         this.startAction = startAction;
         this.endAction = endAction;
@@ -34,15 +34,16 @@ public class WidgetRefresher extends BroadcastReceiver {
         worker = new Runnable() {
             @Override
             public void run() {
-                Log.v(tag, "run");
+                // Log.v(tag, "run");
                 context.sendBroadcast(refreshIntent);
+                timerHandler.postDelayed(worker,updateRate);
             }
         };
-
+        //timerHandler.post(worker);
     }
 
     @Override
-    public void onReceive(final Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         Log.v(tag, "received");
 
@@ -53,5 +54,9 @@ public class WidgetRefresher extends BroadcastReceiver {
             Log.v(tag, "ending timer");
             timerHandler.removeCallbacks(worker);
         }
+    }
+
+    public void start(){
+        timerHandler.postDelayed(worker, updateRate);
     }
 }

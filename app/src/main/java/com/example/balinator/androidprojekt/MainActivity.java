@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,13 +29,17 @@ import com.example.balinator.androidprojekt.widget.WidgetRefresher;
 public class MainActivity extends AppCompatActivity {
     private static final String tag = "MainActivity";
 
-    private Context context;
+    private static Context context;
     private ListView mListView;
     private MyAdapter mAdapter;
-    private BroadcastReceiver mReceiver_deleteService;
 
     private Database db;
-    private WidgetRefresher widgetRefresher;
+
+    private static boolean isWidgetRefressher = false;
+    private static WidgetRefresher widgetRefresher;
+    private static int updateRate = 1000;
+    private static String startState = Intent.ACTION_SCREEN_ON;
+    private static String endState = Intent.ACTION_SCREEN_OFF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         db.close();
         mAdapter.refreshItems();
 
-        mReceiver_deleteService = new BroadcastReceiver() {
+        /*mReceiver_deleteService = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int viewID = intent.getIntExtra("viewID", 0);
@@ -78,27 +83,32 @@ public class MainActivity extends AppCompatActivity {
                 showDeleteServiceDialog(serviceToDelete, viewToDelete);
             }
         };
-        registerReceiver(mReceiver_deleteService, new IntentFilter("REMOVE_SERVICE"));
+        //registerReceiver(mReceiver_deleteService, new IntentFilter("REMOVE_SERVICE"));*/
 
-        int updateRate = 60;
-        String startState = Intent.ACTION_SCREEN_ON;
-        String endState = Intent.ACTION_SCREEN_OFF;
-        widgetRefresher = new WidgetRefresher(context, updateRate, startState, endState);
-        registerReceiver(widgetRefresher, new IntentFilter(Intent.ACTION_SCREEN_ON));
-        //registerReceiver(widgetRefresher, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        updateMyWidgets(context);
+    }
+
+    public static void chackWidgetRefressher(int length) {
+        if(widgetRefresher == null) {
+            widgetRefresher = new WidgetRefresher(context, updateRate, startState, endState);
+        }
+        if(!isWidgetRefressher && length > 0) {
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(startState);
+            filter.addAction(endState);
+            context.registerReceiver(widgetRefresher, filter);
+            Log.d(tag, "WidgetRefrssher registred");
+            widgetRefresher.start();
+        }else if(isWidgetRefressher && length == 0){
+            context.unregisterReceiver(widgetRefresher);
+            Log.d(tag, "WidgetRefrssher unregistred");
+        }
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mReceiver_deleteService != null) {
-            unregisterReceiver(mReceiver_deleteService);
-            mReceiver_deleteService = null;
-        }
-        if (widgetRefresher != null) {
-            unregisterReceiver(widgetRefresher);
-            widgetRefresher = null;
-        }
     }
 
     @Override
