@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * Created by czimbortibor on 08/12/16.
  */
 
-public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteViewsFactory {
+public class WidgetViewFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private final String tag = "ViewFactory";
     private ArrayList<MyService> mData;
@@ -28,7 +28,7 @@ public class StatisticsWidgetViewFactory implements RemoteViewsService.RemoteVie
     private Database db;
 
 
-    public StatisticsWidgetViewFactory(Context context, Intent intent) {
+    public WidgetViewFactory(Context context, Intent intent) {
         Log.v(tag, "constructor");
         this.context = context;
         this.widgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);

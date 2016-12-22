@@ -1,14 +1,14 @@
 package com.example.balinator.androidprojekt;
 
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,12 +19,11 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.example.balinator.androidprojekt.database.Database;
-import com.example.balinator.androidprojekt.widget.StatisticsWidgetProvider;
-import com.example.balinator.androidprojekt.widget.StatisticsWidgetService;
+import com.example.balinator.androidprojekt.services.struct.MyService;
+import com.example.balinator.androidprojekt.widget.WidgetProvider;
+import com.example.balinator.androidprojekt.widget.WidgetRefresher;
 
 public class MainActivity extends AppCompatActivity {
     private static final String tag = "MainActivity";
@@ -32,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private ListView mListView;
     private MyAdapter mAdapter;
+    private BroadcastReceiver mReceiver_deleteService;
 
     private Database db;
+    private WidgetRefresher widgetRefresher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,22 +61,43 @@ public class MainActivity extends AppCompatActivity {
 
         mListView.setAdapter(mAdapter);
 
-        /** receive a simple text data from another application */
-        Intent intent = this.getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
-
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if (type.equals("text/plain")) {
-                String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-                Toast.makeText(context, ("received message: " + sharedText), Toast.LENGTH_SHORT).show();
-            }
-        }
-
         db.open();
-        db.chackServices();
-        mAdapter.refreshItems();
+        db.checkServices();
         db.close();
+
+        mReceiver_deleteService = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int viewID = intent.getIntExtra("viewID", 0);
+                long serviceID = intent.getLongExtra("serviceID", 0);
+                db.open();
+                MyService serviceToDelete = db.getService(serviceID);
+                db.close();
+                View viewToDelete = findViewById(viewID);
+                showDeleteServiceDialog(serviceToDelete, viewToDelete);
+            }
+        };
+        registerReceiver(mReceiver_deleteService, new IntentFilter("REMOVE_SERVICE"));
+
+        int updateRate = 60;
+        String startState = Intent.ACTION_SCREEN_ON;
+        String endState = Intent.ACTION_SCREEN_OFF;
+        widgetRefresher = new WidgetRefresher(context, updateRate, startState, endState);
+        registerReceiver(widgetRefresher, new IntentFilter(Intent.ACTION_SCREEN_ON));
+        //registerReceiver(widgetRefresher, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mReceiver_deleteService != null) {
+            unregisterReceiver(mReceiver_deleteService);
+            mReceiver_deleteService = null;
+        }
+        if (widgetRefresher != null) {
+            unregisterReceiver(widgetRefresher);
+            widgetRefresher = null;
+        }
     }
 
     @Override
@@ -99,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_add_new_service:
                 //showAddServiceDialog();
                 return true;
-            case R.id.action_chack_services:
+            case R.id.action_check_services:
                 db.open();
-                db.chackServices();
+                db.checkServices();
                 db.close();
                 mAdapter.refreshItems();
                 return true;
@@ -139,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
                 mAdapter.refreshItems();
 
-                //updateMyWidgets(getApplicationContext());
+                updateMyWidgets(context);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -154,31 +176,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void updateMyWidgets(Context context) {
-        int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context,StatisticsWidgetProvider.class));
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, WidgetProvider.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widgetListView);
+    }
 
-        for (int currentWidgetId: ids) {
-            ComponentName thisWidget = new ComponentName(context, StatisticsWidgetProvider.class);
-            RemoteViews remoteView = new RemoteViews(context.getPackageName(), R.layout.widget_provider);
+    private void showDeleteServiceDialog(final MyService service, final View viewToDelete) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Delete");
+        builder.setMessage("Do you wish to delete: " + service.getName() + " ?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // remove service
+                db.open();
+                db.deleteService(service);
+                db.close();
 
-            Intent intentService = new Intent(context, StatisticsWidgetProvider.class);
-
-            intentService.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, currentWidgetId);
-            intentService.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intentService, PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteView.setRemoteAdapter(R.id.widgetListView, intentService);
-            try {
-                pendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
+                // remove service's view
+                mListView.removeViewInLayout(viewToDelete);
+                mAdapter.notifyDataSetChanged();
+                MainActivity.updateMyWidgets(context);
             }
-
-            AppWidgetManager.getInstance(context).updateAppWidget(thisWidget, remoteView);
-        }//*/
-
-        /*int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context,StatisticsWidgetProvider.class));
-        Intent updateIntent = new Intent();
-        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        updateIntent.putExtra(StatisticsWidgetProvider.WIDGET_IDS_KEY, ids);
-        context.sendBroadcast(updateIntent);//*/
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

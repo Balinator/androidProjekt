@@ -97,7 +97,7 @@ public class MyScreenOnService extends MyService {
         long mins = (t % HOUR_IN_MILLS) / MINS_IN_MILLS;
         long sec = (t % MINS_IN_MILLS) / SECS_IN_MILLS;
 
-        mStatistic = "Your phones screen was on " + hours + " hours and " + mins +" minutes on, in the last 24 hour!";
+        mStatistic = "Your phone's screen was " + hours + " hours and " + mins +" minutes on, in the last 24 hours!";
     }
 
     @Override
